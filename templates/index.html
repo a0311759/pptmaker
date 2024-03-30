@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Options Slider</title>
+<style>
+    .navbar {
+        overflow: hidden;
+        background-color: #333;
+        text-align: center; /* Center align the buttons */
+      }
+      
+      /* Style for the navigation bar buttons */
+      .navbar button {
+        display: inline-block;
+        color: #eee; /* Light gray text color */
+        text-align: center;
+        padding: 14px 20px;
+        text-decoration: none;
+        font-size: 17px;
+        border: none;
+        cursor: pointer;
+        background-color: #555; /* Darker gray background color */
+        transition: background-color 0.3s ease; /* Smooth transition for background color change */
+      }
+      
+      /* Style for the navigation bar buttons on hover */
+      .navbar button:hover {
+        background-color: #777; /* Slightly lighter gray background color on hover */
+      }
+      
+      
+        /* Style for the dropdown */
+        .dropdown {
+          position: relative;
+          display: inline-block;
+        }
+      
+        /* Style for the dropdown button */
+        .dropdown-button {
+          background-color: #f1f1f1;
+          border: none;
+          padding: 10px;
+          cursor: pointer;
+        }
+      
+        /* Style for the dropdown content */
+        .dropdown-content {
+          display: none;
+          position: absolute;
+          background-color: #ddd;
+          min-width: 160px;
+          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+          z-index: 1;
+        }
+      
+        /* Style for the dropdown options */
+        .dropdown-content a {
+          color: black;
+          padding: 10px 16px;
+          text-decoration: none;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+      
+        /* Style for the delete button */
+        .delete-button {
+          background-color: #454545;
+          color: white;
+          border: none;
+          padding: 5px 10px;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+      
+        /* Style for the dropdown options on hover */
+        .dropdown-content a:hover {background-color: #ccc;}
+      
+        /* Show the dropdown content (slide down) */
+        .show {display: block;}
+      
+      
+        /* Style for the editable heading */
+      .slide h1 {
+        text-align: center;
+        background-color: #aaaaaa;
+        color: black;
+        font-size: 48px; /* Adjust as needed */
+        padding: 10px;
+      }
+      
+      /* Style for the editable paragraph */
+      .slide p {
+        text-align: center;
+        background-color: #aaaaaa;
+        color: black;
+        font-size: 32px; /* Adjust as needed */
+        padding: 10px;
+      }
+
+    /* Style for the message container */
+    #messageContainer {
+        margin-top: 20px;
+        text-align: center;
+    }
+</style>
+</head>
+<body>
+
+<!-- Navigation bar -->
+<div class="navbar">
+  <button onclick="addNewOption()">Add New Slide</button>
+  <button onclick="toggleDropdown()" class="dropdown-button">View Slides</button>
+  <button onclick="downloadContent()">Download</button>
+</div>
+<p5 style="font-size: small;">start with adding slides</p5>
+<!-- Message container -->
+<div id="messageContainer"></div>
+
+
+<!-- Dropdown container -->
+<div class="dropdown">
+  <!-- Dropdown content (options) -->
+  <div id="dropdownOptions" class="dropdown-content">
+    <!-- Slide options will be added dynamically -->
+  </div>
+</div>
+
+<!-- Slide container -->
+<div id="slideContainer">
+  <!-- Default first slide -->
+  <div id="slide1" class="slide">
+    <h1 contenteditable="true">Title</h1>
+    <p contenteditable="true">Subheading</p>
+  </div>
+</div>
+
+
+<script>
+  // Slide data stored dynamically
+  var slidesData = [];
+
+  // Function to toggle the dropdown content
+  function toggleDropdown() {
+    var dropdownContent = document.getElementById("dropdownOptions");
+    dropdownContent.classList.toggle("show");
+  }
+
+  // Close the dropdown if the user clicks outside of it
+  window.onclick = function(event) {
+    if (!event.target.matches('.dropdown-button')) {
+      var dropdowns = document.getElementsByClassName("dropdown-content");
+      for (var i = 0; i < dropdowns.length; i++) {
+        var openDropdown = dropdowns[i];
+        if (openDropdown.classList.contains('show')) {
+          openDropdown.classList.remove('show');
+        }
+      }
+    }
+  }
+
+  // Function to navigate to slide
+  function navigateToSlide(slideNumber) {
+    var slides = document.getElementsByClassName("slide");
+    for (var i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";
+    }
+    var selectedSlide = document.getElementById("slide" + slideNumber);
+    selectedSlide.style.display = "block";
+  }
+
+  // Function to add new option to the dropdown
+  function addNewOption() {
+    var dropdownContent = document.getElementById("dropdownOptions");
+    var slideNumber = slidesData.length + 1;
+
+    // Store data in slidesData array
+    slidesData.push({
+      heading: "Editable Heading " + slideNumber,
+      paragraph: "Editable Paragraph " + slideNumber + ": Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    });
+
+    // Create new option
+    var newOption = document.createElement("a");
+    newOption.href = "#";
+    newOption.textContent = "Slide " + slideNumber;
+    newOption.onclick = function() {
+      navigateToSlide(slideNumber);
+    };
+
+    // Create delete button for slides other than the first one
+    if (slideNumber !== 1) {
+      var deleteButton = document.createElement("button");
+      deleteButton.textContent = "Delete";
+      deleteButton.className = "delete-button";
+      deleteButton.onclick = function() {
+        newOption.remove(); // Remove the option when delete button is clicked
+        // Remove the corresponding slide
+        var slideToRemove = document.getElementById("slide" + slideNumber);
+        slideToRemove.remove();
+        // Remove data from slidesData array
+        slidesData.splice(slideNumber - 1, 1);
+      };
+      // Append delete button to the option
+      newOption.appendChild(deleteButton);
+    }
+
+    // Append the option to the dropdown
+    dropdownContent.appendChild(newOption);
+
+    // Create a new slide
+    var slideContainer = document.getElementById("slideContainer");
+    var newSlide = document.createElement("div");
+    newSlide.id = "slide" + slideNumber;
+    newSlide.className = "slide";
+    newSlide.style.display = "none";
+    var newHeading = document.createElement("h1");
+    newHeading.contentEditable = true;
+    newHeading.textContent = slidesData[slideNumber - 1].heading;
+    var newParagraph = document.createElement("p");
+    newParagraph.contentEditable = true;
+    newParagraph.textContent = slidesData[slideNumber - 1].paragraph;
+    newSlide.appendChild(newHeading);
+    newSlide.appendChild(newParagraph);
+    slideContainer.appendChild(newSlide);
+
+    // Show "Slides added" message for 2 seconds
+    showMessage("Slides added");
+    setTimeout(function() {
+      clearMessage();
+    }, 1000);
+  }
+
+  // Function to show message
+  function showMessage(message) {
+    var messageContainer = document.getElementById("messageContainer");
+    messageContainer.textContent = message;
+  }
+
+  // Function to clear message
+  function clearMessage() {
+    var messageContainer = document.getElementById("messageContainer");
+    messageContainer.textContent = "";
+  }
+
+  // Function to download the content
+  function downloadContent() {
+    showMessage("Download started...");
+    // Clear message after 2 seconds
+    setTimeout(function() {
+      clearMessage();
+    }, 1000);
+
+    // Capture the updated content
+    var updatedSlidesData = [];
+    var slides = document.getElementsByClassName("slide");
+    for (var i = 0; i < slides.length; i++) {
+      var slide = slides[i];
+      var heading = slide.querySelector("h1").textContent;
+      var paragraph = slide.querySelector("p").textContent;
+      updatedSlidesData.push({ heading: heading, paragraph: paragraph });
+    }
+
+    // Send the updated content to the server
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/download", true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+            showMessage('Slide data downloaded successfully');
+            setTimeout(function() {
+              clearMessage();
+            }, 2000);
+        }
+    };
+    xhr.send(JSON.stringify(updatedSlidesData));
+  }
+</script>
+
+</body>
+</html>
