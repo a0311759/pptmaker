@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quick Slides</title>
+<title>QuicK Slides</title>
 <style>
     .navbar {
         overflow: hidden;
@@ -136,6 +136,10 @@
     <p contenteditable="true">Subheading</p>
   </div>
 </div>
+
+
+<!-- Container for appending filename -->
+<div id="filenameContainer"></div>
 
 
 <script>
@@ -272,12 +276,39 @@
             showMessage('Slide data downloaded successfully');
             setTimeout(function() {
               clearMessage();
-            }, 2000);
+            }, 1000);
+            var response = JSON.parse(xhr.responseText);
+            var filename = response.filename;
+            // Now you have access to the filename in JavaScript
+            
+            // Get the container element
+            var container = document.getElementById('filenameContainer');
+                    
+            // Create a new paragraph element
+            var p = document.createElement("p");
+            // Assign the filename to the paragraph's text content
+            p.textContent = filename;
+            
+            // Append the paragraph to the container
+            // container.appendChild(p);
+            downloadFile(filename);
+            
+            
         }
     };
     xhr.send(JSON.stringify(updatedSlidesData));
   }
+
+  
+
+
+  
+
+    
+  
 </script>
 
 </body>
 </html>
+
+
