@@ -1,3 +1,5 @@
+
+
 import uuid  # for generating a unique random string
 from flask import Flask, render_template, request, jsonify
 from pptx import Presentation
@@ -65,7 +67,10 @@ def download():
     # Save the presentation with the generated filename
     prs.save(filename)
     
-    return 'Presentation generated and saved successfully!'
+    print(f"Presentation saved as: {filename}")  # Print the filename in the terminal
+    
+    # Return the filename as part of the response
+    return jsonify({'filename': filename})
 
 if __name__ == '__main__':
     app.run(debug=True)
