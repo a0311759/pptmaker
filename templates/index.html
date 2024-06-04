@@ -112,6 +112,13 @@
 <!-- Navigation bar -->
 <div class="navbar">
   <button onclick="addNewOption()">Add New Slide</button>
+  <!-- Dropdown for background image options -->
+  <select id="backgroundSelect" onchange="changeBackground()">
+    <option value="a" selected>Bubble</option>
+    <option value="b">Pink</option>
+    <option value="c">Fold Paper</option>
+    <option value="d">Butterfly</option>
+  </select>
   <button onclick="toggleDropdown()" class="dropdown-button">View Slides</button>
   <button onclick="downloadContent()">Download</button>
 </div>
@@ -249,6 +256,14 @@
     messageContainer.textContent = "";
   }
 
+  // Function to change background image option
+  function changeBackground() {
+    var select = document.getElementById("backgroundSelect");
+    var imgOption = select.options[select.selectedIndex].value;
+    // Update img_option value
+    img_option = imgOption;
+  }
+
   // Function to download the content
   function downloadContent() {
     showMessage("Download started...");
@@ -267,7 +282,11 @@
       updatedSlidesData.push({ heading: heading, paragraph: paragraph });
     }
 
-    // Send the updated content to the server
+    // Get the selected image option
+    var select = document.getElementById("backgroundSelect");
+    var imgOption = select.options[select.selectedIndex].value;
+
+    // Send the updated content and img_option to the server
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "/download", true);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -296,19 +315,10 @@
             
         }
     };
-    xhr.send(JSON.stringify(updatedSlidesData));
+    xhr.send(JSON.stringify({ slidesData: updatedSlidesData, img_option: imgOption }));
   }
 
-  
-
-
-  
-
-    
-  
 </script>
 
 </body>
 </html>
-
-
